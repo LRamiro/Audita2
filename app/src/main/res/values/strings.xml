@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Audita2</string>
+    <string name="Ch"></string>
+
+    <string name="buttonToChosePlace">Choose</string>
+
+    <string name="hintPlaceText">Type a place to save...</string>
+
+    <string name="instructionToWriteThePlaceToChose">Please, write the places you are going to take a photo.</string>
+</resources>
