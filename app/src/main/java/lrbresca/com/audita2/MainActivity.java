@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -35,19 +36,34 @@ public class MainActivity extends AppCompatActivity {
         lvPlacesChosen = findViewById(R.id.lvPlacesChosen);
         //Data resource
         places = new ArrayList<>();
-        final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_2, places);
+        final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_1, places);
         lvPlacesChosen.setAdapter(adapter);
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                places.add(etPlacesToBeChosen.getText().toString());
+                String placeToAdd = etPlacesToBeChosen.getText().toString();
+                if(verifyPlace(placeToAdd)){
+                    places.add(placeToAdd);
+                } else {
+                    Toast.makeText(getApplicationContext(), "The place has already been chosen", Toast.LENGTH_SHORT);
+                }
+
                 etPlacesToBeChosen.getText().clear();
                 adapter.notifyDataSetChanged();
             }
         };
         bChosePlaces.setOnClickListener(onClickListener);
+    }
+
+    private boolean verifyPlace(String placeToVerify){
+        for(String s : places){
+            if(!(s.equalsIgnoreCase(placeToVerify))){
+                return true;
+            }
+        return false;
+    }
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
