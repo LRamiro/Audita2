@@ -35,24 +35,27 @@ public class MainActivity extends AppCompatActivity {
         lvPlacesChosen = findViewById(R.id.lvPlacesChosen);
         //Data resource
         places = new ArrayList<>();
+        final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_2, places);
+        lvPlacesChosen.setAdapter(adapter);
+
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 places.add(etPlacesToBeChosen.getText().toString());
+                etPlacesToBeChosen.getText().clear();
+                adapter.notifyDataSetChanged();
             }
         };
-
-        final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_1, places);
-        lvPlacesChosen.setAdapter(adapter);
-
+        bChosePlaces.setOnClickListener(onClickListener);
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 boolean handled = false;
                 if(i == EditorInfo.IME_ACTION_DONE){
-
+                    places.add(etPlacesToBeChosen.getText().toString());
+                    return true;
                 }
                 return false;
             }
