@@ -3,6 +3,7 @@
     <string name="Ch"></string>
 
     <string name="buttonToChosePlace">Choose</string>
+    <string name="buttonToStartCamera">Take the photos</string>
 
     <string name="hintPlaceText">Type a place to save...</string>
 

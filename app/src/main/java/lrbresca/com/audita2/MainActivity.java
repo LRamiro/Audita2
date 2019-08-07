@@ -1,6 +1,8 @@
 package lrbresca.com.audita2;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Button bChosePlaces;
     ListView lvPlacesChosen;
     ArrayList<String> places;
+    Button bTakePhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,15 @@ public class MainActivity extends AppCompatActivity {
         places = new ArrayList<>();
         final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_1, places);
         lvPlacesChosen.setAdapter(adapter);
-
-
+        bTakePhotos = findViewById(R.id.bStartTheCamera);
+        bTakePhotos.setOnClickListener(new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View view) {
+                                               Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                               intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
+                                           }
+                                       }
+        );
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 if(verifyPlace(placeToAdd)){
                     places.add(placeToAdd);
                 } else {
-                    Toast.makeText(getApplicationContext(), "The place has already been chosen", Toast.LENGTH_SHORT);
-                }
+                    Toast.makeText(getApplicationContext(), "The place has already been chosen", Toast.LENGTH_SHORT).show();
 
+                }
                 etPlacesToBeChosen.getText().clear();
                 adapter.notifyDataSetChanged();
             }
@@ -57,12 +68,27 @@ public class MainActivity extends AppCompatActivity {
         bChosePlaces.setOnClickListener(onClickListener);
     }
 
-    private boolean verifyPlace(String placeToVerify){
-        for(String s : places){
-            if(!(s.equalsIgnoreCase(placeToVerify))){
-                return true;
+    private boolean verifyPlace(String placeToVerify) {
+        for (String s : places) {
+            if ((s.equalsIgnoreCase(placeToVerify))) {
+                return false;
             }
-        return false;
+        }
+        return true;
+    }
+
+    private void openCamera() {
+        File file = new File (Environment.getRootDirectory(), MEDIA_DIRECTORY);
+        file.mkdirs();
+
+        String path = Environment.getRootDirectory() + File.separator
+                + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
+
+        File newfile = new File(path);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
+        startActivityForResult(intent, PHOTO_CODE);
     }
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -77,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-    }
 
     @Override
     protected void onStart() {
