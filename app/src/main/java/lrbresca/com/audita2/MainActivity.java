@@ -1,8 +1,14 @@
 package lrbresca.com.audita2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -21,6 +27,12 @@ import java.util.ArrayList;
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String APP_DIRECTORY = "Audita2/";
+    private String MEDIA_DIRECTORY = "media";
+    private String TEMPORAL_PICTURE_NAME = "temporal.jpg";
+    private final int PHOTO_CODE = 100;
+    private final int SELECT_PICTURE = 200;
 
     //View's components
     EditText etPlacesToBeChosen;
@@ -46,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         bTakePhotos.setOnClickListener(new View.OnClickListener() {
                                            @Override
                                            public void onClick(View view) {
-                                               Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                               intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
+                                               openCamera();
                                            }
                                        }
         );
@@ -78,18 +89,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-        File file = new File (Environment.getRootDirectory(), MEDIA_DIRECTORY);
-        file.mkdirs();
 
+        File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        file.mkdirs();
         String path = Environment.getRootDirectory() + File.separator
                 + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
-
-        File newfile = new File(path);
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
-        startActivityForResult(intent, PHOTO_CODE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, PHOTO_CODE);
+        }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PHOTO_CODE :
+                if (resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+                }
+                break;
+        }
+    }
+
+    private void showDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle("Select your place:");
+        CharSequence[] placesCharSequences = places.toArray(new CharSequence[places.size()]);
+
+
+        builder.setItems(placesCharSequences, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // the user clicked on options[which]
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //the user clicked on Cancel
+            }
+        });
+        builder.show();
+    }
+
+
+
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
