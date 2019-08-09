@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
     private void openCamera() {
 
         File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
         file.mkdirs();
         String path = Environment.getRootDirectory() + File.separator
                 + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
@@ -109,24 +109,22 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    showDialog(imageBitmap, places);
 
                 }
                 break;
         }
     }
 
-    private void showDialog() {
-
+    private void showDialog(final Bitmap image, final ArrayList<String> places) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setTitle("Select your place:");
         CharSequence[] placesCharSequences = places.toArray(new CharSequence[places.size()]);
-
-
         builder.setItems(placesCharSequences, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // the user clicked on options[which]
+                createDirectoryAndSaveFile(image, places.get(which));
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -138,7 +136,28 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
 
+        File direct = new File(Environment.getExternalStorageDirectory() + "/DirName");
+
+        if (!direct.exists()) {
+            File wallpaperDirectory = new File("/sdcard/DirName/");
+            wallpaperDirectory.mkdirs();
+        }
+
+        File file = new File(new File("/sdcard/DirName/"), fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
