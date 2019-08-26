@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -23,7 +24,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
 
@@ -91,32 +95,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void openCamera() {
 
-        File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        file.mkdirs();
-        String path = Environment.getRootDirectory() + File.separator
-                + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
+        //We create an intent to start the camera.
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, PHOTO_CODE);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createPartialDirectory();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                Uri photoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(intent, PHOTO_CODE);
+            }
         }
     }
+
+    private File createPartialDirectory() throws IOException {
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        String imageFileName = "JPEG_"+ timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        return image;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case PHOTO_CODE :
                 if (resultCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    showDialog(imageBitmap, places);
+                    showDialog(places);
 
                 }
                 break;
         }
     }
 
-    private void showDialog(final Bitmap image, final ArrayList<String> places) {
+    private void showDialog(final ArrayList<String> places) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setTitle("Select your place:");
@@ -124,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setItems(placesCharSequences, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                createDirectoryAndSaveFile(image, places.get(which));
+                System.out.print("Muestro el dialog");
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
