@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -23,7 +24,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
 
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         //Initializing the view`s components
         etPlacesToBeChosen = findViewById(R.id.etPlacesToBeChosen);
         bChosePlaces = findViewById(R.id.bChosePlaces);
-        lvPlacesChosen = findViewById(R.id.lvPlacesChosen);
+        lvPlacesChosen = findViewById(R.id.lvPlacesChosen); 
         //Data resource
         places = new ArrayList<>();
         final PlacesChosenAdapter adapter = new PlacesChosenAdapter(this, android.R.layout.simple_list_item_1, places);
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         bChosePlaces.setOnClickListener(onClickListener);
     }
 
+    //This method avoid to put a place already present into the list.
     private boolean verifyPlace(String placeToVerify) {
         for (String s : places) {
             if ((s.equalsIgnoreCase(placeToVerify))) {
@@ -90,17 +95,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-
         File file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         file.mkdirs();
         String path = Environment.getRootDirectory() + File.separator
                 + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
+                BuildConfig.APPLICATION_ID + ".fileprovider",
+                file);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, PHOTO_CODE);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -109,14 +119,14 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    showDialog(imageBitmap, places);
+                    //showDialog(imageBitmap, places);
 
                 }
                 break;
         }
     }
 
-    private void showDialog(final Bitmap image, final ArrayList<String> places) {
+    private void showOptionsToSave (final ArrayList<String> places) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setTitle("Select your place:");
@@ -124,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setItems(placesCharSequences, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                createDirectoryAndSaveFile(image, places.get(which));
+                //createDirectoryAndSaveFile(image, places.get(which));
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -137,14 +147,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
-
         File direct = new File(Environment.getExternalStorageDirectory() + "/DirName");
-
         if (!direct.exists()) {
             File wallpaperDirectory = new File("/sdcard/DirName/");
             wallpaperDirectory.mkdirs();
         }
-
         File file = new File(new File("/sdcard/DirName/"), fileName);
         if (file.exists()) {
             file.delete();
@@ -158,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
         /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -197,4 +203,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    private void dispatchTakePictureIntent() throws IOException {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                return;
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = Uri.fromFile(createImageFile());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, PHOTO_CODE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
 }
