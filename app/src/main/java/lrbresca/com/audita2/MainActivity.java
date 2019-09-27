@@ -2,8 +2,10 @@ package lrbresca.com.audita2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -31,14 +33,43 @@ import java.util.Date;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
-    private String APP_DIRECTORY = "Audita2/";
+    private String APP_DIRECTORY = "/Audita2/";
+    private String location_type = "location";
+    private String room_type = "room";
+
     private String MEDIA_DIRECTORY = "media";
     private String TEMPORAL_PICTURE_NAME = "temporal.jpg";
     private final int PHOTO_CODE = 100;
     private final int SELECT_PICTURE = 200;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Context context = getBaseContext();
+        ApplicationInfo appInfo = context.getApplicationInfo();
+        int stringId = appInfo.labelRes;
+
+        createDirectory(room_type, "test/subtest");
+
+
+
+
+    }
+
+    private void createDirectory(String type, String nameDirectory){
+        if(type.equalsIgnoreCase(location_type)){
+
+        }
+        File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), nameDirectory);
+        file.mkdirs();
+
+    }
+
+
+/*
     //View's components
     EditText etPlacesToBeChosen;
     Button bChosePlaces;
@@ -178,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        *//*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 boolean handled = false;
@@ -188,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });*/
+        });*//*
 
 
     @Override
@@ -214,5 +245,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
+    }*/
 }
