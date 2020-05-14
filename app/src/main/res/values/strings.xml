@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">Audita2</string>
-    <string name="Ch"></string>
+
+    <string name="mainActivity_take_photo">Take Photo</string>
+    <string name="mainActivity_create_directory">Create directory</string>
+
+    <string name="photoActivity_place_tag">Please, choose the place</string>
+    <string name="photoActivity_room_tag">Please, choose the room</string>
+    <string name="photoActivity_photo_button">Take the photo</string>
+
+    <string name="directoryActivity_place_tag">Please, enter the place you want to create</string>
+    <string name="directoryActivity_room_tag">Please, enter the room you want to add on that place</string>
+    <string name="directoryActivity_create_directory_button">Create</string>
+
+    <string name="directoryActivity_directory_existed_alert_dialog">The directory chosen already exists.</string>
+    <string name="directoryActivity_directory_existed_alert_dialog_possitive_button">Accept</string>
 
     <string name="buttonToChosePlace">Choose</string>
     <string name="buttonToStartCamera">Take the photos</string>

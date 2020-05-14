@@ -2,6 +2,7 @@ package lrbresca.com.audita2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,21 +29,55 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import lrbresca.com.audita2.Adapters.PlacesChosenAdapter;
+import lrbresca.com.audita2.Utils.DirectoriesUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     private String APP_DIRECTORY = "Audita2/";
+
+    private Button bTakePhotoActivity;
+    private Button bCreateDirectoryActivity;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bTakePhotoActivity = findViewById(R.id.takePhotoActivity);
+        View.OnClickListener bTakePhotoActivityListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intentTakePhotoActivity = new Intent(getApplicationContext(), PhotoActivity.class);
+                startActivity(intentTakePhotoActivity);
+            }
+        };
+        bTakePhotoActivity.setOnClickListener(bTakePhotoActivityListener);
+
+        bCreateDirectoryActivity = findViewById(R.id.createDirectoryActivity);
+        View.OnClickListener bCreateDirectoryActivityListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentCreateDirectoryActivity = new Intent(getApplicationContext(), DirectoryActivity.class);
+                startActivity(intentCreateDirectoryActivity);
+            }
+        };
+        bCreateDirectoryActivity.setOnClickListener(bCreateDirectoryActivityListener);
+    }
+
+
+   /* private String APP_DIRECTORY = "Audita2/";
     private String MEDIA_DIRECTORY = "media";
     private String TEMPORAL_PICTURE_NAME = "temporal.jpg";
     private final int PHOTO_CODE = 100;
     private final int SELECT_PICTURE = 200;
 
     //View's components
-    EditText etPlacesToBeChosen;
-    Button bChosePlaces;
-    ListView lvPlacesChosen;
+    private EditText etPlacesToBeChosen;
+    private Button bChosePlaces;
+    private ListView lvPlacesChosen;
     ArrayList<String> places;
     Button bTakePhotos;
 
@@ -166,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        /*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        *//*etPlacesToBeChosen.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 boolean handled = false;
@@ -176,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });*/
+        });*//*
 
 
     @Override
@@ -232,14 +267,14 @@ public class MainActivity extends AppCompatActivity {
         File storageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DCIM), "Camera");
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+                imageFileName,  *//* prefix *//*
+                ".jpg",         *//* suffix *//*
+                storageDir      *//* directory *//*
         );
 
         // Save a file: path for use with ACTION_VIEW intents
         //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
-    }
+    }*/
 
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvPlaceToBeAddedToDirectory"
+        android:text="@string/directoryActivity_place_tag"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:id="@+id/etPlaceToBeAddedToDirectory"
+        android:maxLines="1"
+        android:maxLength="20"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/tvRoomsToBeChosen"
+        android:text="@string/photoActivity_room_tag"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:id="@+id/etRoomsToBeAddedToDirectory"
+        android:maxLines="1"
+        android:maxLength="20"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"/>
+
+    <Button
+        android:id="@+id/bCreateDirectory"
+        android:text="@string/buttonToChosePlace"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:id="@+id/bFinishCreateDirectories"
+        android:text="Finish directories creation"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"/>
+
+
+</LinearLayout>
